@@ -21,7 +21,7 @@ clock = pygame.time.Clock()
 mouse_x, mouse_y = SCREEN_WIDTH/2, SCREEN_HEIGHT/2
 mouse_pressed = False
 
-ent = entity(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 2)
+ent = entity(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 10, 40, 10)
 
 #main loop
 while True:
@@ -51,8 +51,9 @@ while True:
     
     #   ---------------------------------  DRAWING  ------------------------------------
     screen.fill(C_BLACK)
-    pygame.draw.circle(screen, C_WHITE, (ent.get_pos()[0], ent.get_pos()[1]), 40, 3)
-
+    pygame.draw.circle(screen, C_WHITE, (ent.get_pos()[0], ent.get_pos()[1]), 40, 0)
+    for each in range(len(ent.get_body_parts_pos())):
+        pygame.draw.circle(screen, C_WHITE, (ent.get_body_parts_pos()[each][0], ent.get_body_parts_pos()[each][1]), 40, 0)
 
     pygame.display.update()
     clock.tick(120)
