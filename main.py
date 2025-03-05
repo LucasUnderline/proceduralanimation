@@ -1,11 +1,7 @@
 import pygame
 import sys
-import random
-import math
-import numpy as np
-from scipy.special import comb
-from scripts.entity import entity
-from scripts.utils import get_left_point, get_right_point, get_tip_points, catmull_rom_chain
+from scripts.entity import Entity
+from scripts import utils
 
 pygame.init()
 
@@ -25,11 +21,12 @@ clock = pygame.time.Clock()
 mouse_x, mouse_y = SCREEN_WIDTH/2, SCREEN_HEIGHT/2
 mouse_pressed = False
 
-ent = entity(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 5, 20, 50)
+ent = Entity(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 5, 20, 50)
 
 #main loop
 while True:
     # -----------------------------------  EVENTS  -------------------------------------
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -43,43 +40,35 @@ while True:
             if event.button == 1:
                 mouse_pressed = False
         
-    if mouse_pressed:
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-        ent.move(mouse_x, mouse_y)
+
 
     #   ----------------------------------   LOGIC   -----------------------------------
     
+    if mouse_pressed:
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        ent.move(mouse_x, mouse_y)
     
     #   ---------------------------------  DRAWING  ------------------------------------
+    
     screen.fill(C_BLACK)
     
     _left_points = []
     _right_points = []
     _points = []
     
-    for each in range(len(ent.get_body_parts())):
-        if each+1 > len(ent.get_body_parts())-1:
-            break
-        
-        _left_points.append(get_left_point(ent.get_body_parts()[each][0], ent.get_body_parts()[each][1], ent.get_body_parts()[each][2], 20))
-        _right_points.append(get_right_point(ent.get_body_parts()[each][0], ent.get_body_parts()[each][1], ent.get_body_parts()[each][2], 20))
-        
-        
-    _tip_points = get_tip_points(ent.get_pos()[0], ent.get_pos()[1], ent.get_pos()[2], 20)
-    _points += _tip_points
-
-    _points += _left_points
+    for each in range(len(ent.body_parts)-1): # Getting all side points of all bodyparts
+        _left_points.append(utils.calc_left_point(ent.body_parts[each].x, ent.body_parts[each].y, ent.body_parts[each].angle, 20))
+        _right_points.append(utils.calc_right_point(ent.body_parts[each].x, ent.body_parts[each].y, ent.body_parts[each].angle, 20))
+    _right_points.reverse()  # reverse because that's have to be drawing from last body part to first
     
-    _tip_points = get_tip_points(ent.get_body_parts()[-1][0], ent.get_body_parts()[-1][1], ent.get_body_parts()[-1][2], 20)
-    _points += _tip_points
+    _points = utils.shape_points(ent.tip_points, _left_points, 
+                                 ent.body_parts[-1].get_tip_points(), _right_points)
     
-    _right_points.reverse()
-    _points += _right_points
     
-    pygame.draw.lines(screen, C_WHITE, True, _points, 5)
+    pygame.draw.polygon(screen, C_WHITE, _points, 0) #Shape
     
-    pygame.draw.circle(screen, C_WHITE, get_left_point(ent.get_body_parts()[0][0], ent.get_body_parts()[0][1], ent.get_body_parts()[0][2], 12), 5, 0)
-    pygame.draw.circle(screen, C_WHITE, get_right_point(ent.get_body_parts()[0][0], ent.get_body_parts()[0][1], ent.get_body_parts()[0][2], 12), 5, 0)
+    pygame.draw.circle(screen, C_BLACK, utils.calc_left_point(ent.x, ent.y, ent.angle, 12), 5, 0) #Eye
+    pygame.draw.circle(screen, C_BLACK, utils.calc_right_point(ent.x, ent.y, ent.angle, 12), 5, 0) #Eye
 
 
     #    ------------------------------ UPDATE SCREEN ----------------------------------
