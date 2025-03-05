@@ -21,6 +21,7 @@ clock = pygame.time.Clock()
 mouse_x, mouse_y = SCREEN_WIDTH/2, SCREEN_HEIGHT/2
 mouse_pressed = False
 
+
 ent = Entity(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 5, 20, 50)
 
 #main loop
@@ -57,8 +58,8 @@ while True:
     _points = []
     
     for each in range(len(ent.body_parts)-1): # Getting all side points of all bodyparts
-        _left_points.append(utils.calc_left_point(ent.body_parts[each].x, ent.body_parts[each].y, ent.body_parts[each].angle, 20))
-        _right_points.append(utils.calc_right_point(ent.body_parts[each].x, ent.body_parts[each].y, ent.body_parts[each].angle, 20))
+        _left_points.append(utils.calc_left_point(ent.body_parts[each].x, ent.body_parts[each].y, ent.body_parts[each].angle, ent.base_radius))
+        _right_points.append(utils.calc_right_point(ent.body_parts[each].x, ent.body_parts[each].y, ent.body_parts[each].angle, ent.base_radius))
     _right_points.reverse()  # reverse because that's have to be drawing from last body part to first
     
     _points = utils.shape_points(ent.tip_points, _left_points, 
