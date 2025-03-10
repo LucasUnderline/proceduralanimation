@@ -2,6 +2,7 @@ import pygame
 import math
 import numpy as np
 
+
 def catmull_rom_chain(points, num_points=20): # Smooth line curves algoritm, unused for now
     if len(points) < 4:
         return points
@@ -24,31 +25,31 @@ def catmull_rom_chain(points, num_points=20): # Smooth line curves algoritm, unu
 
 
 
-def calc_left_point(x:int, y:int, angle:float, radius:int)->tuple:
-    _left_point = (x + (radius * math.cos(angle - math.pi/2)),
-                  y + (radius * math.sin(angle - math.pi/2)))
+def calc_left_point(pos, angle:float, radius:int)->tuple:
+    _left_point = (pos, (radius * math.cos(angle - math.pi/2)),
+                   pos, (radius * math.sin(angle - math.pi/2)))
         
     return _left_point
 
-def calc_right_point(x:int, y:int, angle:float, radius:int)->tuple:
-    _right_point = (x + (radius * math.cos(angle + math.pi/2)), 
-                   y + (radius * math.sin(angle + math.pi/2)))
+def calc_right_point(pos, angle:float, radius:int)->tuple:
+    _right_point = (pos[0] + (radius * math.cos(angle + math.pi/2)), 
+                    pos[1] + (radius * math.sin(angle + math.pi/2)))
     
     return _right_point
 
-def calc_tip_points(x:int, y:int, angle:float, radius:int)->list:
-    _tip_point = (x + (radius * math.cos(angle)), 
-                  y + (radius * math.sin(angle)))
+def calc_tip_points(pos, angle:float, radius:int)->list:
+    _tip_point = (pos[0] + (radius * math.cos(angle)), 
+                  pos[1] + (radius * math.sin(angle)))
     
-    _left_tip_point = (x + (radius * math.cos(angle - (math.pi / 4))), 
-                       y + (radius * math.sin(angle - (math.pi / 4))))
+    _left_tip_point = (pos[0] + (radius * math.cos(angle - (math.pi / 4))), 
+                       pos[1] + (radius * math.sin(angle - (math.pi / 4))))
     
-    _right_tip_point = (x + (radius * math.cos(angle + (math.pi / 4))), 
-                        y + (radius * math.sin(angle + (math.pi / 4))))
+    _right_tip_point = (pos[0] + (radius * math.cos(angle + (math.pi / 4))), 
+                        pos[1] + (radius * math.sin(angle + (math.pi / 4))))
     
-    _left_point = calc_left_point(x, y, angle, radius)
+    _left_point = calc_left_point(pos, angle, radius)
     
-    _right_point = calc_right_point(x, y, angle, radius)
+    _right_point = calc_right_point(pos, angle, radius)
         
     return [_left_point, _left_tip_point, _tip_point, _right_tip_point, _right_point]
 

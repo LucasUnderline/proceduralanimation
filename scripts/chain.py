@@ -1,4 +1,5 @@
 import math
+import numpy as np
 from pygame import draw
 from scripts.body import Body
 from scripts import utils
@@ -12,16 +13,16 @@ class Chain:
         
         self.body_parts = []
         for each in range(body_parts): #Create instaces of body part
-            self.body_parts.append(Body(x + self.link_size*(each), y, 0, link_size))
+            self.body_parts.append(Body([x + self.link_size*(each), y], 0, link_size))
         
         
         
-    def move(self, target_x:int, target_y:int)->None:
-        if abs(self.body_parts[0].x - target_x) < self.mov_speed or abs(self.body_parts[0].y - target_y) < self.mov_speed:
+    def move(self, pos)->None:
+        if abs(self.body_parts[0].pos[0] - pos[0]) < self.mov_speed or abs(self.body_parts[0].pos[1] - pos[1]) < self.mov_speed:
             return # If the entity is to near to target position, its dont move
         
-        _dx = target_x - self.body_parts[0].x #distance horizontal
-        _dy = target_y - self.body_parts[0].y #distance vertical
+        _dx = pos[0] - self.body_parts[0].pos[0] #distance horizontal
+        _dy = pos[1] - self.body_parts[0].pos[1] #distance vertical
         _dt = math.hypot(_dx, _dy) #distance total
         
         self.angle = math.atan2(_dy, _dx) #angle in radians
@@ -37,24 +38,24 @@ class Chain:
         
         self.velocity[0] = utils.lerp(self.velocity[0], 0, self.aceleration)
         self.velocity[1] = utils.lerp(self.velocity[1], 0, self.aceleration)
-        self.__update_body(self.body_parts[0].x + self.velocity[0], self.body_parts[0].y + self.velocity[1])
+        self.__update_body([self.body_parts[0].pos[0] + self.velocity[0], self.body_parts[0].pos[1] + self.velocity[1]])
     
-    def __update_body(self, x, y)->None:
-        self.body_parts[0].x = x
-        self.body_parts[0].y = y
+    def __update_body(self, pos)->None:
+        self.body_parts[0].pos[0] = pos[0]
+        self.body_parts[0].pos[1] = pos[1]
         for each in range(1, len(self.body_parts)):
-            _dx = self.body_parts[each].x - self.body_parts[each-1].x # same calc of Move method
-            _dy = self.body_parts[each].y - self.body_parts[each-1].y
+            _dx = self.body_parts[each].pos[0] - self.body_parts[each-1].pos[0] # same calc of Move method
+            _dy = self.body_parts[each].pos[1] - self.body_parts[each-1].pos[1]
             _dt = math.hypot(_dx, _dy)
             _angle = math.atan2(_dy, _dx)
             
             if abs(_dt) > 0: # if the body is near or far of the anchor radius, its get into it
                 _f = self.link_size / _dt # factor to know how much near or far is it
-                self.body_parts[each].update(self.body_parts[each-1].x + (_dx * _f), self.body_parts[each-1].y + (_dy * _f), _angle)
+                self.body_parts[each].update([self.body_parts[each-1].pos[0] + (_dx * _f), self.body_parts[each-1].pos[1] + (_dy * _f)], _angle)
     
     def draw_chain(self, surface, color):
         for i, each in enumerate(self.body_parts):
-            draw.circle(surface, color, (each.x, each.y), 8, 0)
-            draw.circle(surface, color, (each.x, each.y), 16, 3)
+            draw.circle(surface, color, (each.pos[0], each.pos[1]), 8, 0)
+            draw.circle(surface, color, (each.pos[0], each.pos[1]), 16, 3)
             if i + 1 < len(self.body_parts):
-                draw.line(surface, color, (each.x, each.y), (self.body_parts[i+1].x, self.body_parts[i+1].y), 5)
+                draw.line(surface, color, (each.pos[0], each.pos[1]), (self.body_parts[i+1].pos[0], self.body_parts[i+1].pos[1]), 5)
