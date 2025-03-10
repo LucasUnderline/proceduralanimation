@@ -58,3 +58,6 @@ def shape_points(*args):
         _points += each
     
     return _points
+
+def lerp(val1, val2, factor):
+    return (1 - factor) * val1 + factor * val2
