@@ -4,6 +4,7 @@ from scripts.chain import Chain
 from scripts import utils
 
 pygame.init()
+pygame.font.init()
 
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
@@ -19,7 +20,8 @@ clock = pygame.time.Clock()
 mouse_x, mouse_y = SCREEN_WIDTH/2, SCREEN_HEIGHT/2
 mouse_pressed = False
 
-spine = Chain(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 5, 50, 20)
+spine = Chain((SCREEN_WIDTH/2, SCREEN_HEIGHT/2), 5, 50, 20)
+font = pygame.font.Font(None, 36)
 
 #main loop
 while True:
@@ -37,6 +39,11 @@ while True:
         elif event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
                 mouse_pressed = False
+        
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                pygame.quit()
+                sys.exit()
 
     #   ----------------------------------   LOGIC   -----------------------------------
     

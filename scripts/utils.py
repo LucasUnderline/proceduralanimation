@@ -40,7 +40,7 @@ def calc_right_point(pos, angle:float, radius:int)->tuple:
 def calc_tip_points(pos, angle:float, radius:int)->list:
     _tip_point = (pos[0] + (radius * math.cos(angle)), 
                   pos[1] + (radius * math.sin(angle)))
-    
+
     _left_tip_point = (pos[0] + (radius * math.cos(angle - (math.pi / 4))), 
                        pos[1] + (radius * math.sin(angle - (math.pi / 4))))
     
@@ -60,5 +60,69 @@ def shape_points(*args):
     
     return _points
 
+
+
 def lerp(val1, val2, factor):
     return (1 - factor) * val1 + factor * val2
+
+
+
+def calculate_distance_angle(target: list, source: list
+                             ) -> tuple[float, float, float, float]:
+    
+        dx = target[0] - source[0]
+        dy = target[1] - source[1]
+        dist = math.hypot(dx, dy)
+        angle = normalize_angle(math.atan2(dy, dx))
+        return dx, dy, dist, angle
+    
+
+
+def lengthdir(pos, dist, angle):
+    x = dist * math.cos(angle)
+    y = dist * math.sin(angle)
+    return pos[0]+ x, pos[1] + y
+
+
+
+def normalize_angle(angle):
+    return (angle + math.pi) % (2 * math.pi) - math.pi
+
+
+def subtract_vectors(list1, list2):
+    a = list1[0] - list2[0]
+    b = list1[1] - list2[1]
+    return a, b
+
+def unwrap_angle(current_angle, prev_angle):
+    while current_angle - prev_angle > math.pi:
+        current_angle -= 2 * math.pi
+    while current_angle - prev_angle < -math.pi:
+        current_angle += 2 * math.pi
+    return current_angle
+
+def unwrap_one_angle(current_angle):
+    while current_angle > math.pi:
+        current_angle -= 2 * math.pi
+    while current_angle < -math.pi:
+        current_angle += 2 * math.pi
+    return current_angle
+
+def constraint_angle(angle, anchor, limit_factor):
+    prev_angle = anchor
+    angle = unwrap_angle(angle, prev_angle)
+
+    sup_limit = prev_angle + (math.pi / limit_factor)
+    inf_limit = prev_angle - (math.pi / limit_factor)
+    
+    if angle > sup_limit:
+        angle = sup_limit
+    elif angle < inf_limit:
+        angle = inf_limit
+        
+    return angle
+
+def lerp_angle(angle1, angle2, t):
+    delta = (angle2 - angle1 + math.pi) % (2 * math.pi) - math.pi
+    interpolated_angle = angle1 + delta * t
+    return (interpolated_angle + math.pi) % (2 * math.pi) - math.pi
