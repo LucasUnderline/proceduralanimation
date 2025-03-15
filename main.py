@@ -20,7 +20,7 @@ clock = pygame.time.Clock()
 mouse_x, mouse_y = SCREEN_WIDTH/2, SCREEN_HEIGHT/2
 mouse_pressed = False
 
-spine = Chain((SCREEN_WIDTH/2, SCREEN_HEIGHT/2), 5, 50, 20)
+spine = Chain((SCREEN_WIDTH/2, SCREEN_HEIGHT/2), 8, 50, 20)
 font = pygame.font.Font(None, 36)
 
 #main loop

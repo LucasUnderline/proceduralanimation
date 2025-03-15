@@ -9,7 +9,7 @@ class Chain:
     def __init__(self, pos:list, mov_speed:float, link_size:int, body_parts:int)->None:
         self.mov_speed = mov_speed
         self.link_size = link_size
-        self.velocity = Velocity(0.2)
+        self.velocity = Velocity(0.1)
         
         self.angle_limit_factor = 4
         
@@ -27,7 +27,9 @@ class Chain:
         if abs(_dt) < self.mov_speed:
             return
         
-        self.body_parts[0].angle = utils.normalize_angle(_ang + math.pi)
+        _ang = utils.constraint_angle(_ang + math.pi, self.body_parts[0].angle, self.angle_limit_factor*16)
+        
+        self.body_parts[0].angle = utils.normalize_angle(_ang)
         self.velocity.update(_x, _y)
     
     

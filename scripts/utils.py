@@ -123,6 +123,17 @@ def constraint_angle(angle, anchor, limit_factor):
     return angle
 
 def lerp_angle(angle1, angle2, t):
+    """ Interpola entre dois ângulos de forma contínua e estável, sem flickering """
+    
+    # Calcula a menor diferença possível entre os ângulos (evita saltos)
     delta = (angle2 - angle1 + math.pi) % (2 * math.pi) - math.pi
+
+    # Se o delta for muito pequeno, retorna diretamente angle2 (evita flutuações numéricas)
+    if abs(delta) < 1e-6:
+        return angle2
+
+    # Faz a interpolação linear usando a menor diferença encontrada
     interpolated_angle = angle1 + delta * t
+
+    # Normaliza o ângulo para mantê-lo no intervalo [-π, π]
     return (interpolated_angle + math.pi) % (2 * math.pi) - math.pi
