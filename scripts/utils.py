@@ -26,8 +26,8 @@ def catmull_rom_chain(points, num_points=20): # Smooth line curves algoritm, unu
 
 
 def calc_left_point(pos, angle:float, radius:int)->tuple:
-    _left_point = (pos, (radius * math.cos(angle - math.pi/2)),
-                   pos, (radius * math.sin(angle - math.pi/2)))
+    _left_point = (pos[0] + (radius * math.cos(angle - math.pi/2)),
+                   pos[1] + (radius * math.sin(angle - math.pi/2)))
         
     return _left_point
 
@@ -48,7 +48,6 @@ def calc_tip_points(pos, angle:float, radius:int)->list:
                         pos[1] + (radius * math.sin(angle + (math.pi / 4))))
     
     _left_point = calc_left_point(pos, angle, radius)
-    
     _right_point = calc_right_point(pos, angle, radius)
         
     return [_left_point, _left_tip_point, _tip_point, _right_tip_point, _right_point]
@@ -60,12 +59,8 @@ def shape_points(*args):
     
     return _points
 
-
-
 def lerp(val1, val2, factor):
     return (1 - factor) * val1 + factor * val2
-
-
 
 def calculate_distance_angle(target: list, source: list
                              ) -> tuple[float, float, float, float]:
@@ -76,18 +71,13 @@ def calculate_distance_angle(target: list, source: list
         angle = normalize_angle(math.atan2(dy, dx))
         return dx, dy, dist, angle
     
-
-
 def lengthdir(pos, dist, angle):
     x = dist * math.cos(angle)
     y = dist * math.sin(angle)
     return pos[0]+ x, pos[1] + y
 
-
-
 def normalize_angle(angle):
     return (angle + math.pi) % (2 * math.pi) - math.pi
-
 
 def subtract_vectors(list1, list2):
     a = list1[0] - list2[0]
@@ -123,17 +113,9 @@ def constraint_angle(angle, anchor, limit_factor):
     return angle
 
 def lerp_angle(angle1, angle2, t):
-    """ Interpola entre dois ângulos de forma contínua e estável, sem flickering """
-    
-    # Calcula a menor diferença possível entre os ângulos (evita saltos)
     delta = (angle2 - angle1 + math.pi) % (2 * math.pi) - math.pi
-
-    # Se o delta for muito pequeno, retorna diretamente angle2 (evita flutuações numéricas)
     if abs(delta) < 1e-6:
         return angle2
 
-    # Faz a interpolação linear usando a menor diferença encontrada
     interpolated_angle = angle1 + delta * t
-
-    # Normaliza o ângulo para mantê-lo no intervalo [-π, π]
     return (interpolated_angle + math.pi) % (2 * math.pi) - math.pi
